@@ -44,7 +44,7 @@
     ></script>
     <script src="main.js"></script>
   </head>
-  <body onload="installServiceWorkerAsync()">
+  <body onload="onLoad()">
     <!-- Header -->
     <div class="d-flex justify-content-center bg-info" style="height: 100px;">
       <h5 class="align-self-center text-light">Hello there</h5>
@@ -53,27 +53,34 @@
     <div class="d-flex justify-content-center">
       <div class="row">
         <div class="col-sm" style="margin:5px;">
-          <input type="number" class="form-control" placeholder="0.0" />
+          <input
+            id="valueToConvert"
+            type="number"
+            class="form-control"
+            placeholder="0.0"
+          />
         </div>
         <div class="col-sm" style="margin:5px;">
           <button
             class="form-control bg-primary text-light"
-            onclick="console.log('hello')"
+            onclick="convert()"
           >
             Convert
           </button>
           <select
             class="form-control"
-            id="SelectCurrency"
+            id="selectCurrency"
             style="margin-top:10px;"
           >
-            <option>Dinnar</option>
-            <option>Oui</option>
-            <option>Non</option>
           </select>
         </div>
         <div class="col-sm" style="margin:5px;">
-          <input type="number" class="form-control" placeholder="0.0" />
+          <input
+            id="convertedValue"
+            type="number"
+            class="form-control"
+            placeholder="0.0"
+          />
         </div>
       </div>
     </div>
@@ -81,19 +88,14 @@
     <div class="d-flex justify-content-center">
       <div class="col-sm" style="margin:5px;"></div>
       <div class="col-sm">
-        <table class="table">
+        <table class="table table-dark">
           <thead>
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Rate convertion</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Mark</th>
-              <td>1.12</td>
-            </tr>
-          </tbody>
+          <tbody id="bodyTableRate"></tbody>
         </table>
       </div>
       <div class="col-sm" style="margin:5px;"></div>
