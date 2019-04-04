@@ -27,8 +27,11 @@ function convert() {
 }
 
 async function addRateInfoToTable() {
-  const { rates } = await fetchAsync("https://localhost:5001/api/xeu");
+  const { rates } = await fetchAsync(
+    "https://localhost:5001/api/xeu?baseCurrency=EUR&symbols=GBP,JPY,USD"
+  );
   RATES = rates;
+  console.log(RATES);
   const html = Object.entries(rates).reduce((accumulator, [key, value]) => {
     setOption(key);
     return `${accumulator}
@@ -47,10 +50,24 @@ function setOption(key) {
   select.appendChild(option);
 }
 
-async function fetchAsync(url) {
-  const res = await fetch(url);
+async function fetchAsync(url, { method = "GET", body, jwt } = {}) {
+  const headers = {
+    "Content-Type": "application/json"
+  };
+  if (jwt) {
+    headers.Authorization = `Bearer ${jwt}`;
+  }
+  const options = {
+    headers,
+    method
+  };
+  if (method === "POST") {
+    options.body = JSON.stringify(body);
+  }
+  const res = await fetch(url, options);
   if (!res.ok) {
     throw "ERROR";
   }
-  return res.json();
+  const json = await res.json();
+  return json;
 }
