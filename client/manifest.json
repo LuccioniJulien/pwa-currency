@@ -1,0 +1,11 @@
+{
+  "name": "Currency",
+  "short_name": "Currency",
+  "description": "A description",
+  "lang": "fr-FR",
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "orientation": "any",
+  "theme_color": "#2b70c7",
+  "icons": []
+}
