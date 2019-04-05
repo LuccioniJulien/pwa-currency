@@ -7,9 +7,13 @@ this.addEventListener("install", async () => {
 });
 
 self.addEventListener("fetch", async event => {
-//   if (/^https?:\/\/.*/.test(event.request.url)) {
-//     return fetch(event.request);
-//   }
+  console.log("event.request");
+  console.log(event.request);
+  if (event.request.method != "GET") {
+    return new Promise((resolve, reject) => {
+      resolve("ok");
+    });
+  }
   const getCachedResponse = async () => {
     try {
       const cachedResponse = await caches.match(event.request);

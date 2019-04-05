@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -16,8 +17,6 @@ namespace BaseApi {
         public Startup (IConfiguration configuration) {
             Configuration = configuration;
         }
-
-        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -31,12 +30,6 @@ namespace BaseApi {
                     .AddThrowOnError (false)
                     .AddEncoding (Encoding.ASCII);
             });
-
-            services.AddCors (o => o.AddPolicy (MyAllowSpecificOrigins, builder => {
-                builder.AllowAnyOrigin ()
-                    .AllowAnyMethod ()
-                    .AllowAnyHeader ();
-            }));
 
             // ajout support postgres
             services.AddEntityFrameworkNpgsql ()
@@ -60,19 +53,36 @@ namespace BaseApi {
                         ValidateAudience = false
                     };
                 });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure (IApplicationBuilder app, IHostingEnvironment env) {
+            app.UseCors (x => x
+                .AllowAnyOrigin ()
+                .AllowAnyMethod ()
+                .AllowAnyHeader ());
             if (env.IsDevelopment ()) {
                 app.UseDeveloperExceptionPage ();
+                UpdateDatabase (app);
             } else {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts ();
             }
-            app.UseCors (MyAllowSpecificOrigins);
             app.UseHttpsRedirection ();
             app.UseMvc ();
+            app.UseAuthentication ();
+        }
+
+        private static void UpdateDatabase (IApplicationBuilder app) {
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory> ()
+                .CreateScope ()) {
+                using (var context = serviceScope.ServiceProvider.GetService<DBcontext> ()) {
+                    // créé la bdd si elle n'existe pas
+                    context.Database.EnsureCreated ();
+                }
+            }
         }
     }
 }

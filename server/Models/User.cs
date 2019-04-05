@@ -26,5 +26,12 @@ namespace BaseApi.Models {
         public bool Compare (string password) => BCrypt.Net.BCrypt.Verify (password, PasswordHash);
 
         public object ToMessage () => new { Id, Name, Email };
+
+        public void Deconstruct (out string name,out string mail, out string password, out string passwordConfirmation) {
+            name = Name;
+            password = Password;
+            mail = Email;
+            passwordConfirmation = PasswordConfirmation;
+        }
     }
 }
